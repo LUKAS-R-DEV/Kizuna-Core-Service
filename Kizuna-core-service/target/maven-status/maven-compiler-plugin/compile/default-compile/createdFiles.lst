@@ -1,0 +1,14 @@
+Kizuna_core_service/inventory/dto/InventoryResponseDto.class
+Kizuna_core_service/shared/config/SecurityConfig.class
+Kizuna_core_service/shared/exception/BusinessException.class
+Kizuna_core_service/inventory/service/InventoryService.class
+Kizuna_core_service/shared/dto/ErrorResponseDto.class
+Kizuna_core_service/inventory/domain/Status.class
+Kizuna_core_service/inventory/dto/InventoryRequestDto.class
+Kizuna_core_service/KizunaCoreServiceApplication.class
+Kizuna_core_service/shared/exception/NotFoundException.class
+Kizuna_core_service/shared/exception/GlobalExceptionHandler.class
+Kizuna_core_service/inventory/repository/InventoryRepository.class
+Kizuna_core_service/inventory/dto/InventoryUpdateDto.class
+Kizuna_core_service/inventory/domain/Inventory.class
+Kizuna_core_service/inventory/controller/InventoryController.class

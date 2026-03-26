@@ -1,0 +1,14 @@
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/KizunaCoreServiceApplication.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/inventory/controller/InventoryController.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/inventory/domain/Inventory.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/inventory/domain/Status.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/inventory/dto/InventoryRequestDto.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/inventory/dto/InventoryResponseDto.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/inventory/dto/InventoryUpdateDto.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/inventory/repository/InventoryRepository.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/inventory/service/InventoryService.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/shared/config/SecurityConfig.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/shared/dto/ErrorResponseDto.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/shared/exception/BusinessException.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/shared/exception/GlobalExceptionHandler.java
+/home/lucas/Área de Trabalho/KIZUNA1/Kizuna-core-service/src/main/java/Kizuna_core_service/shared/exception/NotFoundException.java
