@@ -33,10 +33,11 @@ public class RecipeService {
 
     @Transactional
     public RecipeResponseDto create(RecipeRequestDto requestDto){
-
+        Inventory product=inventoryRepository.findById(requestDto.productId()).orElseThrow(() -> new NotFoundException("Product not found"));
         Recipe recipe=new Recipe();
         recipe.setName(requestDto.name());
         recipe.setDescription(requestDto.description());
+        recipe.setProduct(product);
         recipe.setEstimatedProductionTime(requestDto.estimatedProductionTime());
         recipe.setActive(true);
 
@@ -58,10 +59,12 @@ public class RecipeService {
 
     @Transactional
     public RecipeResponseDto update(Long id, RecipeUpdateDto updateDto){
+        Inventory product=inventoryRepository.findById(updateDto.productId()).orElseThrow(() -> new NotFoundException("Product not found"));
         Recipe recipe=recipeRepository.findById(id).orElseThrow(() -> new NotFoundException("Recipe not found"));
 
         recipe.setName(updateDto.name());
         recipe.setDescription(updateDto.description());
+        recipe.setProduct(product);
         recipe.setEstimatedProductionTime(updateDto.estimatedProductionTime());
 
         recipe.getItems().clear();
@@ -90,7 +93,7 @@ public class RecipeService {
 
 
     private final RecipeResponseDto recipeResponseDto(Recipe recipe){
-        return new RecipeResponseDto(recipe.getId(),recipe.getName(),recipe.getDescription(),recipe.getItems().stream().map(this::recipeItemResponseDto).collect(Collectors.toSet()),recipe.getEstimatedProductionTime());
+        return new RecipeResponseDto(recipe.getId(),recipe.getProduct().getName(),recipe.getName(),recipe.getDescription(),recipe.getItems().stream().map(this::recipeItemResponseDto).collect(Collectors.toSet()),recipe.getEstimatedProductionTime());
     }
     private final RecipeItemResponseDto recipeItemResponseDto(RecipeItem recipeItem){
         return new RecipeItemResponseDto(recipeItem.getInventory().getName(),recipeItem.getInventory().getId(),recipeItem.getQuantity());

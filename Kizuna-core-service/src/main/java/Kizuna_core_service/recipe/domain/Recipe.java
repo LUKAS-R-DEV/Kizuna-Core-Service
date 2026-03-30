@@ -1,5 +1,6 @@
 package Kizuna_core_service.recipe.domain;
 
+import Kizuna_core_service.inventory.domain.Inventory;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,7 +21,10 @@ public class Recipe {
     private Boolean active=true;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Integer estimatedProductionTime;
+    private Long estimatedProductionTime;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Inventory product;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RecipeItem> items=new HashSet<>();

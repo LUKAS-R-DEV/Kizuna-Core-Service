@@ -15,8 +15,9 @@ public class ProductionOrder {
     private Long id;
     private Integer quantityToProduce;
     private LocalDateTime startTime;
-    private Integer estimatedTotalTime;
+    private Long estimatedTotalTime;
     private LocalDateTime endTime;
+    private Boolean inspection;
     @Enumerated(EnumType.STRING)
     private ProductionOrderStatus status;
     @ManyToOne

@@ -19,19 +19,20 @@ import Kizuna_core_service.shared.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 
-public class productionOrderService {
+public class ProductionOrderService {
     private final ProductionOrderRepository productionOrderRepository;
     private final RecipeRepository recipeRepository;
     private final InventoryRepository inventoryRepository;
     private final InventoryMovementRepository inventoryMovementRepository;
 
-    public productionOrderService(ProductionOrderRepository productionOrderRepository, RecipeRepository recipeRepository, InventoryRepository inventoryRepository, InventoryMovementRepository inventoryMovementRepository) {
+    public ProductionOrderService(ProductionOrderRepository productionOrderRepository, RecipeRepository recipeRepository, InventoryRepository inventoryRepository, InventoryMovementRepository inventoryMovementRepository) {
         this.productionOrderRepository = productionOrderRepository;
         this.recipeRepository = recipeRepository;
         this.inventoryRepository = inventoryRepository;
@@ -56,6 +57,7 @@ public class productionOrderService {
         productionOrder.setQuantityToProduce(requestDto.quantityToProduce());
         productionOrder.setStatus(ProductionOrderStatus.PLANNED);
         productionOrder.setRecipe(recipe);
+        productionOrder.setQualityInspectionPassed(false);
         productionOrder.setEstimatedTotalTime(productionOrder.getQuantityToProduce()*recipe.getEstimatedProductionTime());
         productionOrderRepository.save(productionOrder);
         return productionOrderResponseDto(productionOrder);
@@ -83,12 +85,10 @@ public class productionOrderService {
             Inventory inventory = item.getInventory();
             Double consumption = item.getQuantity() * productionOrder.getQuantityToProduce();
             inventory.setQuantity(inventory.getQuantity() - consumption);
-            if (inventory.getQuantity() < inventory.getMinStock()) {
-                inventory.setStatus(Status.CRITICAL);
-            } else {
-                inventory.setStatus(Status.GOOD);
-            }
-            String reason="Production order " + productionOrder.getId();
+            Status status=(inventory.getMinStock()>inventory.getQuantity()) ? Status.CRITICAL : Status.GOOD;
+
+            inventory.setStatus(status);
+            String reason="Production order ID: " + productionOrder.getId();
             InventoryMovement inventoryMovement = new InventoryMovement(inventory, consumption, reason, MovementType.EXIT);
             movements.add(inventoryMovement);
             inventoriesToUpdate.add(inventory);
@@ -100,6 +100,7 @@ public class productionOrderService {
         productionOrderRepository.save(productionOrder);
         return productionOrderResponseDto(productionOrder);
     }
+    @Transactional
     public ProductionOrderResponseDto finish(Long id){
         ProductionOrder productionOrder=productionOrderRepository.findById(id).orElseThrow(() -> new NotFoundException("Production order not found"));
         if(!productionOrder.getStatus().equals(ProductionOrderStatus.IN_PROGRESS)){
@@ -119,8 +120,46 @@ public class productionOrderService {
         productionOrderRepository.save(productionOrder);
         return productionOrderResponseDto(productionOrder);
     }
+    public Long calculateRemainingTime(ProductionOrder order){
+        if(order.getStartTime()==null){
+          return order.getEstimatedTotalTime();
+        }
+        long elapsed = Duration.between(order.getStartTime(), LocalDateTime.now()).toMinutes();
+         long remaing=order.getEstimatedTotalTime() - elapsed;
+         return Math.max(0, remaing);
+
+    }
+    public Double calculateProgress(ProductionOrder order) {
+        if (order.getStartTime() == null) {
+            return 0.0;
+        }
+        long total = order.getEstimatedTotalTime();
+        long elapsed = Duration.between(order.getStartTime(), LocalDateTime.now()).toMinutes();
+        double progress = ((double) elapsed / total) * 100;
+        return Math.min(progress, 100.0);
+    }
+
+    public LocalDateTime calculateETA(ProductionOrder order) {
+        if (order.getStartTime() == null) {
+            return null;
+        }
+        return order.getStartTime().plusMinutes(order.getEstimatedTotalTime());
+    }
+
+    public ProductionOrderStatus calculateStatus(ProductionOrder order) {
+        if (order.getStartTime() == null) {
+            return ProductionOrderStatus.PLANNED;
+        }
+        long elapsed = Duration.between(order.getStartTime(), LocalDateTime.now()).toMinutes();
+
+        if (elapsed >= order.getEstimatedTotalTime()) {
+            return ProductionOrderStatus.COMPLETED;
+        }
+        return ProductionOrderStatus.IN_PROGRESS;
+    }
+
     private ProductionOrderResponseDto productionOrderResponseDto(ProductionOrder productionOrder){
-        return new ProductionOrderResponseDto(productionOrder.getId(),productionOrder.getRecipe().getName(),productionOrder.getQuantityToProduce(),productionOrder.getStartTime(),productionOrder.getEndTime(),productionOrder.getStatus(),productionOrder.getEstimatedTotalTime());
+        return new ProductionOrderResponseDto(productionOrder.getId(),productionOrder.getRecipe().getName(),productionOrder.getQuantityToProduce(),productionOrder.getStartTime(),productionOrder.getQualityInspectionPassed(),productionOrder.getEndTime(),productionOrder.getStatus(),productionOrder.getEstimatedTotalTime(),calculateProgress(productionOrder),calculateETA(productionOrder),calculateRemainingTime(productionOrder),calculateStatus(productionOrder));
     }
 
 }

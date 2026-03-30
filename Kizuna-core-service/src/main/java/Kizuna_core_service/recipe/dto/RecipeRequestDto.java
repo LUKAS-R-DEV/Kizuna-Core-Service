@@ -14,6 +14,8 @@ public record RecipeRequestDto(
         @NotEmpty(message = "Items cannot be empty")
         Set<RecipeItemRequestDto> items,
         @NotNull(message = "Estimated product time cannot be null")
-        Integer estimatedProductionTime) {
+        Long estimatedProductionTime,
+        @NotNull(message = "Product ID cannot be null")
+        Long productId) {
 
 }

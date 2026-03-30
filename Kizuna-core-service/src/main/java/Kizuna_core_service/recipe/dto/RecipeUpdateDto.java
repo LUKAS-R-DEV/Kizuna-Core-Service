@@ -13,6 +13,8 @@ public record RecipeUpdateDto(
         @NotNull(message = "Items cannot be null")
         Set<RecipeItemRequestDto> items,
         @NotNull(message = "Estimated product time cannot be null")
-        Integer estimatedProductionTime) {
+        Long estimatedProductionTime,
+        @NotNull(message = "Product ID cannot be null")
+        Long productId) {
 
 }
